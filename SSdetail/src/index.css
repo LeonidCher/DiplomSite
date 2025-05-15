@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+@font-face {
+  font-family: Harmonia Sans Pro Cyr;
+  src: url(./assets/Fonts/HarmoniaSansProCyr-Bold.ttf);
+}
+@font-face {
+  font-family: YaltaSansW01-Bold;
+  src: url(./assets/Fonts/YaltaSans.ttf);
+}
+*{
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  text-decoration: none;
+  list-style: none;
+}
+body{
+  background: rgb(37, 37, 37);
+}
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0px;
+}

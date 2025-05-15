@@ -1,0 +1,55 @@
+.feedbackCard {
+  border-radius: 10px;
+  width: 250px;
+  background: rgba(0, 0, 0, 0.7);
+  height: 400px;
+  z-index: 1;
+
+}
+.feedbackCard__name {
+  color: rgb(255, 255, 255);
+  font-family: Montserrat;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 29px;
+  letter-spacing: 0px;
+  text-align: left;
+}
+.feedbackCard__logo {
+  width: 40px;
+}
+.feedbackCard__header {
+  padding: 15px 20px;
+  border-bottom: 2px solid rgb(255, 255, 255);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.feedbackCard__text {
+  color: rgb(255, 255, 255);
+  font-family: Montserrat;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 17px;
+  letter-spacing: 0px;
+  text-align: left;
+}
+.feedbackCard__body {
+  padding: 25px 18px;
+}
+.feedback__title {
+  color: rgb(255, 255, 255);
+  font-family: Montserrat;
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 36px;
+  letter-spacing: -0.5px;
+  text-align: center;
+  text-transform: uppercase;
+}
+.feedback__cardsWrap{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 80px;
+}

@@ -1,0 +1,55 @@
+header {
+  background: linear-gradient(
+    180deg,
+    rgb(48, 28, 28) 41.782%,
+    rgba(0, 0, 0, 0.308) 150%
+  );
+  position: absolute;
+  width: 100%;
+  box-shadow: 0px 20px 10px 0px rgba(0, 0, 0, 0.445);
+}
+.header__title--first {
+  color: rgb(255, 255, 255);
+  font-family: Harmonia Sans Pro Cyr;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 58px;
+  letter-spacing: -2px;
+  text-align: left;
+}
+.header__title {
+  color: rgb(255, 255, 255);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 44px;
+  letter-spacing: 0px;
+  text-align: left;
+  text-transform: uppercase;
+}
+.header__title--second {
+  font-family: YaltaSansW01-Bold;
+}
+.header__logoWrap {
+  display: flex;
+  align-items: center;
+}
+.header__logo {
+  margin-right: 30px;
+}
+.header__button {
+  background: none;
+  border: none;
+  color: rgb(255, 255, 255);
+  font-family: Montserrat;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 44px;
+  letter-spacing: 0px;
+  text-align: left;
+  margin-right: 50px;
+}
+.header__wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
