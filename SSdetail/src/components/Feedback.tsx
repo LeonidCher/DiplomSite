@@ -20,7 +20,9 @@ const Feedback: React.FC = () => {
           throw new Error(`Ошибка при загрузке отзывов: ${response.status} ${errorText}`);
         }
         const data = await response.json();
-        setReviews(data);
+        // Фильтруем только подтверждённые отзывы
+        const approvedReviews = data.filter((review: any) => review.approved);
+        setReviews(approvedReviews);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Неизвестная ошибка');
         console.error('Fetch error in Feedback:', err);

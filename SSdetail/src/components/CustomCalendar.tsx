@@ -42,6 +42,8 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({ onSelect }) => {
               return time;
             });
           setOccupiedSlots(occupied);
+        } else {
+          setOccupiedSlots([]); // Сбрасываем, если дата не выбрана
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Неизвестная ошибка');
@@ -52,7 +54,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({ onSelect }) => {
     fetchOccupiedSlots();
   }, [selectedDate]);
 
-  // Генерация дней для календаря (например, ближайшие 30 дней)
+  // Генерация дней для календаря (ближайшие 30 дней)
   const generateDays = () => {
     const days = [];
     const today = new Date();
@@ -99,19 +101,18 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({ onSelect }) => {
       </div>
       {selectedDate && (
         <div className="calendar-times">
-          {availableTimes
-            .filter(time => !occupiedSlots.includes(time)) // Фильтруем занятые слоты
-            .map((time, index) => (
-              <button
-                key={index}
-                className={`calendar-time ${selectedTime === time ? 'selected' : ''}`}
-                onClick={() => handleTimeSelect(time)}
-              >
-                {time}
-              </button>
-            ))}
+          {availableTimes.map((time, index) => (
+            <button
+              key={index}
+              className={`calendar-time ${selectedTime === time ? 'selected' : ''} ${occupiedSlots.includes(time) ? 'disabled' : ''}`}
+              onClick={() => !occupiedSlots.includes(time) && handleTimeSelect(time)} // Вызов только если не занят
+              disabled={occupiedSlots.includes(time)} // Отключаем кнопку
+            >
+              {time}
+            </button>
+          ))}
           {availableTimes.every(time => occupiedSlots.includes(time)) && (
-            <p>На эту дату нет свободных слотов.</p>
+            <p>На эту дату все слоты заняты.</p>
           )}
         </div>
       )}

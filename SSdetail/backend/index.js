@@ -27,10 +27,7 @@ transporter.verify((error, success) => {
 });
 
 // Подключение к MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/diplom', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect('mongodb://127.0.0.1:27017/diplom')
   .then(() => console.log('MongoDB подключена'))
   .catch(err => console.log('Ошибка подключения к MongoDB:', err));
 
@@ -42,6 +39,7 @@ const applicationSchema = new mongoose.Schema({
   email: { type: String, required: true },
   phone: { type: String, required: true },
   dateTime: { type: String, required: true },
+  confirmed: { type: Boolean, default: false },
 });
 
 const Application = mongoose.model('Application', applicationSchema);
@@ -51,9 +49,13 @@ const reviewSchema = new mongoose.Schema({
   name: { type: String, required: true },
   text: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
+  approved: { type: Boolean, default: false }, // Добавляем поле для подтверждения
 });
 
 const Review = mongoose.model('Review', reviewSchema);
+
+// Email админа
+const ADMIN_EMAIL = '4ls2005@mail.ru'; // Замени на email админа
 
 // Маршруты для заявок
 app.get('/api/applications', async (req, res) => {
@@ -70,8 +72,8 @@ app.post('/api/applications', async (req, res) => {
     const application = new Application(req.body);
     await application.save();
 
-    // Отправка email
-    const mailOptions = {
+    // Отправка email клиенту
+    const clientMailOptions = {
       from: 'your-email@gmail.com',
       to: application.email,
       subject: 'Спасибо за заявку! 🎉',
@@ -84,11 +86,35 @@ app.post('/api/applications', async (req, res) => {
       `,
     };
 
-    await transporter.sendMail(mailOptions, (error, info) => {
+    await transporter.sendMail(clientMailOptions, (error, info) => {
       if (error) {
-        console.error('Ошибка отправки email:', error);
+        console.error('Ошибка отправки email клиенту:', error);
       } else {
-        console.log('Email отправлен на', application.email, info.response);
+        console.log('Email отправлен клиенту:', application.email, info.response);
+      }
+    });
+
+    // Отправка уведомления админу
+    const adminMailOptions = {
+      from: 'your-email@gmail.com',
+      to: ADMIN_EMAIL,
+      subject: 'Новая заявка поступила! 🚗',
+      html: `
+        <h2>Новая заявка от ${application.name}</h2>
+        <p>Услуга: ${application.service}</p>
+        <p>Автомобиль: ${application.carModel}</p>
+        <p>Дата и время: ${new Date(application.dateTime).toLocaleString()}</p>
+        <p>Email клиента: ${application.email}</p>
+        <p>Телефон клиента: ${application.phone}</p>
+        <p>Пожалуйста, подтвердите или отмените заявку в админ-панели.</p>
+      `,
+    };
+
+    await transporter.sendMail(adminMailOptions, (error, info) => {
+      if (error) {
+        console.error('Ошибка отправки email админу:', error);
+      } else {
+        console.log('Email отправлен админу:', ADMIN_EMAIL, info.response);
       }
     });
 
@@ -112,6 +138,77 @@ app.delete('/api/applications/:id', async (req, res) => {
   }
 });
 
+app.put('/api/applications/:id/confirm', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const application = await Application.findByIdAndUpdate(id, { confirmed: true }, { new: true });
+    if (!application) {
+      return res.status(404).json({ message: 'Заявка не найдена' });
+    }
+
+    const mailOptions = {
+      from: 'your-email@gmail.com',
+      to: application.email,
+      subject: 'Ваша заявка подтверждена! ✅',
+      html: `
+        <h2>Здравствуйте, ${application.name}!</h2>
+        <p>Ваша заявка на услугу "${application.service}" для автомобиля ${application.carModel} успешно подтверждена.</p>
+        <p>Дата и время записи: ${new Date(application.dateTime).toLocaleString()}</p>
+        <p>Наш специалист свяжется с вами по телефону ${application.phone} для уточнения деталей. Если у вас есть вопросы, пишите на этот email.</p>
+        <p>С уважением,<br/>Команда SS Detailing</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Ошибка отправки email:', error);
+      } else {
+        console.log('Email подтверждения отправлен на', application.email, info.response);
+      }
+    });
+
+    res.status(200).json({ message: 'Заявка подтверждена', application });
+  } catch (err) {
+    res.status(500).json({ message: `Ошибка при подтверждении заявки: ${err.message}` });
+  }
+});
+
+app.delete('/api/applications/:id/cancel', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const application = await Application.findById(id);
+    if (!application) {
+      return res.status(404).json({ message: 'Заявка не найдена' });
+    }
+
+    const mailOptions = {
+      from: 'your-email@gmail.com',
+      to: application.email,
+      subject: 'Ваша заявка отменена 😔',
+      html: `
+        <h2>Здравствуйте, ${application.name}!</h2>
+        <p>К сожалению, ваша заявка на услугу "${application.service}" для автомобиля ${application.carModel} была отменена.</p>
+        <p>Дата и время записи: ${new Date(application.dateTime).toLocaleString()}</p>
+        <p>Если у вас есть вопросы или вы хотите записаться на новое время, свяжитесь с нами по телефону ${application.phone} или через сайт.</p>
+        <p>С уважением,<br/>Команда SS Detailing</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Ошибка отправки email:', error);
+      } else {
+        console.log('Email об отмене отправлен на', application.email, info.response);
+      }
+    });
+
+    await Application.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Заявка отменена' });
+  } catch (err) {
+    res.status(500).json({ message: `Ошибка при отмене заявки: ${err.message}` });
+  }
+});
+
 // Маршруты для отзывов
 app.get('/api/reviews', async (req, res) => {
   try {
@@ -126,9 +223,59 @@ app.post('/api/reviews', async (req, res) => {
   try {
     const review = new Review(req.body);
     await review.save();
+
+    // Отправка уведомления админу
+    const adminMailOptions = {
+      from: 'your-email@gmail.com',
+      to: ADMIN_EMAIL,
+      subject: 'Новый отзыв поступил! 🌟',
+      html: `
+        <h2>Новый отзыв от ${review.name}</h2>
+        <p>Текст отзыва: ${review.text}</p>
+        <p>Дата: ${new Date(review.createdAt).toLocaleString()}</p>
+        <p>Пожалуйста, подтвердите или отклоните отзыв в админ-панели.</p>
+      `,
+    };
+
+    await transporter.sendMail(adminMailOptions, (error, info) => {
+      if (error) {
+        console.error('Ошибка отправки email админу:', error);
+      } else {
+        console.log('Email отправлен админу:', ADMIN_EMAIL, info.response);
+      }
+    });
+
     res.status(201).json(review);
   } catch (err) {
     res.status(400).json({ message: `Ошибка при сохранении отзыва: ${err.message}` });
+  }
+});
+
+// Новый маршрут для подтверждения отзыва
+app.put('/api/reviews/:id/approve', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const review = await Review.findByIdAndUpdate(id, { approved: true }, { new: true });
+    if (!review) {
+      return res.status(404).json({ message: 'Отзыв не найден' });
+    }
+    res.status(200).json({ message: 'Отзыв подтвержден', review });
+  } catch (err) {
+    res.status(500).json({ message: `Ошибка при подтверждении отзыва: ${err.message}` });
+  }
+});
+
+// Новый маршрут для отклонения отзыва
+app.delete('/api/reviews/:id/reject', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const review = await Review.findByIdAndDelete(id);
+    if (!review) {
+      return res.status(404).json({ message: 'Отзыв не найден' });
+    }
+    res.status(200).json({ message: 'Отзыв отклонён и удалён' });
+  } catch (err) {
+    res.status(500).json({ message: `Ошибка при отклонении отзыва: ${err.message}` });
   }
 });
 

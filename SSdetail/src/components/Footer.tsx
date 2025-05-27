@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
       <div className="container">
         <div className="footer__content">
           <p>© 2025 SS Detailing. Все права защищены.</p>
-          <p>г. Москва, ул. Примерная, д. 10 | +7 (999) 123-45-67</p>
+          <p>г. Ульяновск, ул. Богдана Хмельницкого, д. 30А | +7 (902) 213-04-56</p>
           <button className="footer__review-button" onClick={openModal}>
             Оставить отзыв
           </button>

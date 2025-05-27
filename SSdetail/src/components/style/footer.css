@@ -12,6 +12,7 @@ footer{
   align-items: center;
   gap: 10px;
   text-align: center;
+  color: white
 }
 
 .footer__review-button {
