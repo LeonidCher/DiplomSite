@@ -7,6 +7,7 @@ interface FormData {
   carModel: string;
   service: string;
   email: string;
+  phone: string;
   dateTime: string;
 }
 
@@ -22,16 +23,18 @@ function ApplicationForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      const result = await response.json();
-      console.log('Ответ сервера:', result);
+      const text = await response.text(); // Получаем сырой текст ответа
+      console.log('Сырой ответ сервера:', text);
+      const result = JSON.parse(text); // Пробуем распарсить как JSON
+      console.log('Ответ сервера (JSON):', result);
       if (response.ok) {
         alert('Заявка успешно отправлена!');
       } else {
         alert(`Ошибка: ${result.message || 'Проверь консоль'}`);
       }
     } catch (err) {
-      console.error('Ошибка:', err);
-      alert('Ошибка сервера, проверь консоль');
+      console.error('Ошибка при отправке заявки:', err);
+      alert('Ошибка соединения с сервером, проверь консоль');
     }
   };
 
@@ -99,6 +102,20 @@ function ApplicationForm() {
             className="applicationForm__inputTxt"
           />
           {errors.email && <p className="error">{errors.email.message}</p>}
+
+          <input
+            {...register("phone", {
+              required: "Номер телефона обязателен",
+              pattern: {
+                value: /^\+?[1-9]\d{1,14}$/,
+                message: "Неверный формат номера телефона",
+              },
+            })}
+            type="tel"
+            placeholder="Ваш номер телефона"
+            className="applicationForm__inputTxt"
+          />
+          {errors.phone && <p className="error">{errors.phone.message}</p>}
 
           <div onClick={(e) => e.preventDefault()}>
             <CustomCalendar onSelect={(dateTime) => setValue('dateTime', dateTime, { shouldValidate: false })} />

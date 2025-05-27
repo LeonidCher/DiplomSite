@@ -5,6 +5,8 @@ import Categories from "./Categories";
 import sliderImg1 from "../../public/image/sliderImage1.png";
 import Feedback from "./Feedback";
 import ApplicationForm from "./ApplicationForm";
+import ReviewForm from "./ReviewForm"; // Добавляем форму отзывов
+
 function MainContent() {
   return (
     <>
@@ -19,7 +21,7 @@ function MainContent() {
         <div className="container">
           <div className="headerVideo__textblock">
             <p className="headerVideo__preTitle">
-              Профессиональный детейлинг, безупречная тонирвочная <b>И</b>
+              Профессиональный детейлинг, безупречная тонировка <b>И</b>
             </p>
             <h1 className="headerVideo__title">уход за кузовом автомобиля</h1>
             <p className="headerVideo__desc">
@@ -59,7 +61,7 @@ function MainContent() {
           <div className="works__textBlock">
             <h2 className="works__subTitle">
               Искусство детейлинга{" "}
-              <span className="works__title_red"> в каждой детали</span>
+              <span className="works__title_red">в каждой детали</span>
             </h2>
             <p className="works__description">
               Каждая деталь — это искусство, а каждый проект — наша гордость.
@@ -74,6 +76,7 @@ function MainContent() {
           </div>
         </div>
         <Feedback></Feedback>
+        {/* <ReviewForm /> Добавляем форму для отзывов */}
         <div className="applicationForm">
           <div className="container">
             <ApplicationForm></ApplicationForm>
@@ -83,4 +86,5 @@ function MainContent() {
     </>
   );
 }
+
 export default MainContent;
