@@ -1,0 +1,8 @@
+footer{
+    background: linear-gradient(180.00deg, rgb(35, 40, 43) 42.162%,rgb(13, 13, 13) 112.432%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 185px;
+    margin-top: 150px;
+}

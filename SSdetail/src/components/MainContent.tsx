@@ -3,7 +3,7 @@ import "./style/mainContent.css";
 import ServiceCards from "./ServiceCards";
 import Categories from "./Categories";
 import sliderImg1 from "../../public/image/sliderImage1.png";
-import Feedback from "./feedback";
+import Feedback from "./Feedback";
 import ApplicationForm from "./ApplicationForm";
 function MainContent() {
   return (

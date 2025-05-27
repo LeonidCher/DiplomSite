@@ -80,7 +80,7 @@
   margin-top: 63px;
 }
 .categories {
-  margin-top: 300px;
+  margin-top: 100px;
 }
 .works__slider-item {
   filter: brightness(35%);
@@ -94,15 +94,7 @@
   letter-spacing: -0.5px;
   text-align: left;
   text-transform: uppercase;
-  margin-top: 156px;
-}
-.works__title {
-  font-family: Montserrat;
-  font-size: 64px;
-  font-weight: 700;
-  line-height: 78px;
-  letter-spacing: 0px;
-  text-align: left;
+  margin-top: 100px;
   margin-bottom: 100px;
 }
 .works__title_red {
@@ -142,7 +134,7 @@
 .works__textBlock {
   position: relative;
   width: 758px;
-  margin-bottom: 200px;
+  margin-bottom: 300px;
   z-index: 1;
 }
 .works__title {

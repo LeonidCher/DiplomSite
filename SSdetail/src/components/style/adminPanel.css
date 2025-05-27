@@ -1,0 +1,52 @@
+.admin-panel {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.admin-panel h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.admin-panel table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-panel th,
+.admin-panel td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.admin-panel th {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.admin-panel td {
+  color: #ccc;
+}
+
+.admin-panel tr:hover {
+  background: #222;
+}
+
+@media (max-width: 768px) {
+  .admin-panel {
+    width: 90%;
+    padding: 10px;
+  }
+  .admin-panel th,
+  .admin-panel td {
+    padding: 8px;
+    font-size: 0.9em;
+  }
+}
