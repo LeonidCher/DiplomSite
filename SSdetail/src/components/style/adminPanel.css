@@ -1,5 +1,4 @@
 .admin-panel {
-  max-width: 900px;
   margin: 20px auto;
   padding: 20px;
   background: #1a1a1a;
@@ -38,6 +37,25 @@
   background: #ff0000;
 }
 
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.filter-controls label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #ccc;
+  font-size: 0.9em;
+}
+
+.filter-controls input[type="checkbox"] {
+  accent-color: #ff0000;
+}
+
 .admin-panel table {
   width: 100%;
   border-collapse: collapse;
@@ -63,6 +81,21 @@
   background: #222;
 }
 
+.delete-button {
+  background: #ff0000;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background 0.3s ease;
+}
+
+.delete-button:hover {
+  background: #ff3333;
+}
+
 @media (max-width: 768px) {
   .admin-panel {
     width: 90%;
@@ -72,5 +105,12 @@
   .admin-panel td {
     padding: 8px;
     font-size: 0.9em;
+  }
+  .filter-controls {
+    gap: 10px;
+  }
+  .delete-button {
+    padding: 3px 8px;
+    font-size: 0.8em;
   }
 }

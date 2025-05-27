@@ -1,101 +1,122 @@
 import React, { useState, useEffect } from 'react';
 import './style/customCalendar.css';
 
-interface CalendarProps {
+interface CustomCalendarProps {
   onSelect: (dateTime: string) => void;
 }
 
-const CustomCalendar: React.FC<CalendarProps> = ({ onSelect }) => {
-  const [currentDate, setCurrentDate] = useState(new Date('2025-05-27T14:17:00Z')); // Текущая дата: 27 мая 2025, 14:17 BST
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+const CustomCalendar: React.FC<CustomCalendarProps> = ({ onSelect }) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [occupiedSlots, setOccupiedSlots] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  // Имитация занятых слотов
-  const occupiedSlots = [
-    '2025-05-27T14:00:00Z',
-    '2025-05-28T10:00:00Z',
-    '2025-05-29T15:00:00Z',
+  // Доступные временные слоты (например, с 9:00 до 18:00 с шагом 1 час)
+  const availableTimes = [
+    '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00',
   ];
 
-  // Временные слоты с 10:00 до 16:00
-  const timeSlots = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
-
+  // Получение занятых слотов
   useEffect(() => {
-    const utcDate = new Date(currentDate.toISOString());
-    setCurrentDate(utcDate);
-  }, []);
+    const fetchOccupiedSlots = async () => {
+      try {
+        console.log('Fetching applications for occupied slots...');
+        const response = await fetch('http://localhost:5000/api/applications');
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Fetch error:', response.status, errorText);
+          throw new Error(`Ошибка при загрузке заявок: ${response.status} ${errorText}`);
+        }
+        const applications = await response.json();
 
-  const getDaysInMonth = () => {
-    const year = currentDate.getUTCFullYear();
-    const month = currentDate.getUTCMonth();
-    return new Date(year, month + 1, 0).getUTCDate();
+        if (selectedDate) {
+          // Фильтруем заявки по выбранной дате
+          const selectedDateString = selectedDate.toISOString().split('T')[0];
+          const occupied = applications
+            .filter((app: any) => {
+              const appDate = new Date(app.dateTime).toISOString().split('T')[0];
+              return appDate === selectedDateString;
+            })
+            .map((app: any) => {
+              const time = new Date(app.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              return time;
+            });
+          setOccupiedSlots(occupied);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Неизвестная ошибка');
+        console.error('Fetch error in CustomCalendar:', err);
+      }
+    };
+
+    fetchOccupiedSlots();
+  }, [selectedDate]);
+
+  // Генерация дней для календаря (например, ближайшие 30 дней)
+  const generateDays = () => {
+    const days = [];
+    const today = new Date();
+    for (let i = 0; i < 30; i++) {
+      const day = new Date(today);
+      day.setDate(today.getDate() + i);
+      days.push(day);
+    }
+    return days;
   };
 
-  const handleDateSelect = (day: number, time: string) => {
-    const selected = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day, parseInt(time.split(':')[0]), 0, 0));
-    if (selected < new Date('2025-05-27T14:17:00Z')) return; // Блокируем прошедшие дни
-    const dateTimeString = selected.toISOString();
-    setSelectedDate(dateTimeString);
-    onSelect(dateTimeString);
+  const days = generateDays();
+
+  const handleDateSelect = (day: Date) => {
+    setSelectedDate(day);
+    setSelectedTime(null); // Сбрасываем выбранное время при смене даты
   };
 
-  const isOccupied = (day: number, time: string) => {
-    const dateTime = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day, parseInt(time.split(':')[0]), 0, 0)).toISOString();
-    return occupiedSlots.includes(dateTime);
+  const handleTimeSelect = (time: string) => {
+    setSelectedTime(time);
+    if (selectedDate) {
+      const dateTime = new Date(selectedDate);
+      const [hours, minutes] = time.split(':');
+      dateTime.setHours(parseInt(hours), parseInt(minutes));
+      onSelect(dateTime.toISOString());
+    }
   };
 
-  const renderCalendar = () => {
-    const daysInMonth = getDaysInMonth();
-    const firstDay = new Date(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), 1).getUTCDay() || 7;
-    const weeks = Math.ceil((daysInMonth + firstDay - 1) / 7);
-    const currentDay = new Date('2025-05-27T14:17:00Z').getUTCDate(); // 27 мая
+  if (error) return <div className="custom-calendar">Ошибка: {error}</div>;
 
-    return (
-      <div className="calendar">
-        <div className="calendar-header">
-          <button onClick={() => setCurrentDate(new Date(currentDate.setUTCMonth(currentDate.getUTCMonth() - 1)))}>Пред.</button>
-          <h3>{currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</h3>
-          <button onClick={() => setCurrentDate(new Date(currentDate.setUTCMonth(currentDate.getUTCMonth() + 1)))}>След.</button>
-        </div>
-        <div className="calendar-grid">
-          {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(day => (
-            <div key={day} className="calendar-day-header">{day}</div>
-          ))}
-          {Array.from({ length: weeks * 7 }, (_, i) => {
-            const day = i - firstDay + 2;
-            if (day > 0 && day <= daysInMonth) {
-              const isPast = day < currentDay && currentDate.getUTCMonth() === 4 && currentDate.getUTCFullYear() === 2025;
-              return (
-                <div key={i} className="calendar-day">
-                  <div className={`day-number ${isPast ? 'past' : ''}`}>{day}</div>
-                  {!isPast && (
-                    <div className="time-slots">
-                      {timeSlots.map(time => {
-                        const isBusy = isOccupied(day, time);
-                        if (isBusy) return null; // Скрываем занятlavender занятое время
-                        return (
-                          <button
-                            key={time}
-                            type="button" // Предотвращаем отправку формы
-                            className={`time-slot ${selectedDate === new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day, parseInt(time.split(':')[0]), 0, 0)).toISOString() ? 'selected' : ''}`}
-                            onClick={() => handleDateSelect(day, time)}
-                          >
-                            {time}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            }
-            return <div key={i} className="calendar-day"></div>;
-          })}
-        </div>
+  return (
+    <div className="custom-calendar">
+      <h3>Выберите дату и время</h3>
+      <div className="calendar-days">
+        {days.map((day, index) => (
+          <button
+            key={index}
+            className={`calendar-day ${selectedDate?.toDateString() === day.toDateString() ? 'selected' : ''}`}
+            onClick={() => handleDateSelect(day)}
+          >
+            {day.toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'short' })}
+          </button>
+        ))}
       </div>
-    );
-  };
-
-  return <div>{renderCalendar()}</div>;
+      {selectedDate && (
+        <div className="calendar-times">
+          {availableTimes
+            .filter(time => !occupiedSlots.includes(time)) // Фильтруем занятые слоты
+            .map((time, index) => (
+              <button
+                key={index}
+                className={`calendar-time ${selectedTime === time ? 'selected' : ''}`}
+                onClick={() => handleTimeSelect(time)}
+              >
+                {time}
+              </button>
+            ))}
+          {availableTimes.every(time => occupiedSlots.includes(time)) && (
+            <p>На эту дату нет свободных слотов.</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default CustomCalendar;
