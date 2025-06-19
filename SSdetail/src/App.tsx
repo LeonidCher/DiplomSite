@@ -1,6 +1,11 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Layout from './Layout';
 import AdminPanel from './components/AdminPanel';
+import ServicesPage from './components/ServicesPage';
+import ContactsPage from './components/ContactsPage';
+import AboutPage from './components/AboutPage';
+import MainContent from './components/MainContent';
+import ApplicationForm from './components/ApplicationForm';
 import { useState } from 'react';
 
 function App() {
@@ -17,7 +22,13 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Layout />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<MainContent />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/contacts" element={<ContactsPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/apply" element={<ApplicationForm />} />
+        </Route>
         <Route
           path="/admin"
           element={

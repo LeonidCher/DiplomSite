@@ -40,7 +40,7 @@ function ApplicationForm() {
 
   return (
     <div className="applicationForm__wrap">
-      <h2 className="applicationForm__title">Оставить заявку</h2>
+      <h2 className="applicationForm__title">Записаться на услугу</h2>
       <div className="applicationForm__formWrap">
         <div className="applicationForm__desc">
           <p className="applicationForm__descTxt">

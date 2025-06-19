@@ -1,12 +1,15 @@
-header {
-  background: linear-gradient(
-    180deg,
-    rgb(48, 28, 28) 41.782%,
-    rgba(0, 0, 0, 0.308) 150%
-  );
-  position: absolute;
-  width: 100%;
-  box-shadow: 0px 20px 10px 0px rgba(0, 0, 0, 0.445);
+.header-main {
+    background: linear-gradient(180deg, rgb(33 33 33) 41.782%, rgb(0 0 0 / 31%) 150%);
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    box-shadow: 0px 3px 11px 14px rgba(0, 0, 0, 0.445);
+}
+.header-other {
+  background: linear-gradient(180deg, rgb(33 33 33) 41.782%, rgb(0 0 0 / 31%) 150%);
+    z-index: 10;
+    width: 100%;
+    box-shadow: 0px 3px 11px 14px rgba(0, 0, 0, 0.445);
 }
 .header__title--first {
   color: rgb(255, 255, 255);

@@ -14,7 +14,7 @@ import ServiceCard from './ServiceCard'
 
 function ServiceCards () {
     return (
-        <div>
+        <div className='cardss__flexx'>
             <ServiceCard title='Полировка кузова' icon={polish} />
             <ServiceCard title='Химчистка салона' icon={himchistka} />
             <ServiceCard title='Предпродажная подготовка' icon={predprodazha} />
